@@ -30,30 +30,28 @@ const App = () => {
   }, [tasks]);
 
   useEffect(() => {
-    let alreadyReminded = {}; // To prevent repeat in same minute
+  const interval = setInterval(() => {
+    const now = new Date();
+    const currentHour = String(now.getHours()).padStart(2, '0');
+    const currentMinute = String(now.getMinutes()).padStart(2, '0');
+    const currentTime = `${currentHour}:${currentMinute}`;
+    const today = now.toISOString().slice(0, 10); // YYYY-MM-DD
 
-    const interval = setInterval(() => {
-      const now = new Date();
-      const currentHour = String(now.getHours()).padStart(2, '0');
-      const currentMinute = String(now.getMinutes()).padStart(2, '0');
-      const currentTime = `${currentHour}:${currentMinute}`;
-
-      tasks.forEach(task => {
-        if (!task.completed && task.time === currentTime && !alreadyReminded[task.id]) {
+    tasks.forEach(task => {
+      if (!task.completed && task.time === currentTime) {
+        const reminderKey = `reminded_${task.id}_${today}_${currentTime}`;
+        if (!sessionStorage.getItem(reminderKey)) {
           speak(task.text);
           notify(task.text);
-          alreadyReminded[task.id] = true;
+          sessionStorage.setItem(reminderKey, 'true');
         }
+      }
+    });
+  }, 1000); // Check every second
 
-        // Reset the flag every minute for fresh daily reminder
-        if (task.time !== currentTime) {
-          alreadyReminded[task.id] = false;
-        }
-      });
-    }, 1000); // Check every second
+  return () => clearInterval(interval);
+}, [tasks]);
 
-    return () => clearInterval(interval);
-  }, [tasks]);
 
 
 
