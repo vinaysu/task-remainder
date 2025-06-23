@@ -30,18 +30,26 @@ const App = () => {
   }, [tasks]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-      tasks.forEach(task => {
-        if (!task.completed && task.time === currentTime) {
-          speak(task.text);
-          notify(task.text);
-        }
-      });
-    }, 60000); // Check every minute
-    return () => clearInterval(interval);
-  }, [tasks]);
+  const interval = setInterval(() => {
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const currentSecond = now.getSeconds();
+
+    tasks.forEach(task => {
+      if (
+        !task.completed &&
+        task.time === currentTime &&
+        currentSecond === 0 // Speak only at the beginning of the minute
+      ) {
+        speak(task.text);
+        notify(task.text);
+      }
+    });
+  }, 1000); // check every second
+
+  return () => clearInterval(interval);
+}, [tasks]);
+
 
   const addTask = () => {
     if (!taskText || !remindTime) return;
