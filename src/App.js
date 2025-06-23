@@ -1,4 +1,4 @@
-/ App.jsx
+
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
@@ -9,6 +9,7 @@ const speak = (text) => {
 
 const notify = (text) => {
   if (Notification.permission === 'granted') {
+    
     new Notification('Task Reminder', { body: text });
   }
 };
