@@ -1,4 +1,4 @@
-
+// App.jsx
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
@@ -9,7 +9,6 @@ const speak = (text) => {
 
 const notify = (text) => {
   if (Notification.permission === 'granted') {
-    
     new Notification('Task Reminder', { body: text });
   }
 };
@@ -73,6 +72,7 @@ const App = () => {
   return (
     <div className="app">
       <h1>Pending Tasks: {tasks.filter(task => !task.completed).length}</h1>
+      <button onClick={() => speak('Testing voice notification')}>Test Voice</button>
       <div className="task-list">
         {sortedTasks.map(task => (
           <div className={`task ${task.completed ? 'completed' : ''}`} key={task.id}>
